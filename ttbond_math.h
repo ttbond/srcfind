@@ -77,8 +77,72 @@ inline bool selectFromSepStr(char *rel,char *source,char *tar,char sepSymbol){
     }
 }
 
+inline char getComBase(char base){
+    switch(base){
+        case 'A':
+            return 'T';
+        case 'T':
+            return 'A';
+        case 'G':
+            return 'C';
+        case 'C':
+            return 'G';
+        case 'a':
+            return 't';
+        case 't':
+            return 'a';
+        case 'g':
+            return 'c';
+        case 'c':
+            return 'g';
+    }
+}
 
+inline int nuc2int(char nuc){
+    switch(nuc){
+        case 'A':
+        case 'a':
+            return 0;
+        case 'G':
+        case 'g':
+            return 1;
+        case 'C':
+        case 'c':
+            return 2;
+        case 'T':
+        case 't':
+            return 3;
+        default:
+            return -1;
+    }
+}
 
-
-
+inline char int2nuc(int num,bool capital=true){
+    if(capital){
+        switch(num){
+            case 0:
+                return 'A';
+            case 1:
+                return 'G';
+            case 2:
+                return 'C';
+            case 3:
+                return 'T';
+            default:
+                return 'N';
+        }
+    }
+    else{
+        switch(num){
+            case 0:
+                return 'a';
+            case 1:
+                return 'g';
+            case 2:
+                return 'c';
+            case 3:
+                return 't';
+        }
+    }
+}
 #endif //SRCFIND_TTBOND_MATH_H

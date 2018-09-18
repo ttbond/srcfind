@@ -26,6 +26,8 @@ int main()
     int regionNum=chr.size();
     for(int i=0;i<regionNum;i++){
         detectRegion region(agct,chr[i],st[i],ed[i],agct,chr[i],st2[i],ed2[i]);
+        region.getReverseComScore();
+        region.getReverseComScore();
         break;
     }
     //printf("%d\n",chr1NormalSV.vcfNum);
