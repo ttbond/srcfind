@@ -24,12 +24,24 @@ int main()
     std::vector<long long>ed2;
     chr1NormalSV.getDetetionRegions(chr,st,st2,ed,ed2,agctLen);
     int regionNum=chr.size();
+    // for test
+    FILE *fp=fopen("testout.dat","w");
+    detectRegion region("AGCTAGCT",1,1,8);
+    region.getReverseComScore();
+    region.printDetectRel();
+
+
+     //
+    /*
+
     for(int i=0;i<regionNum;i++){
         detectRegion region(agct,chr[i],st[i],ed[i],agct,chr[i],st2[i],ed2[i]);
+        //region.agct="AGCTAGCTAGCTAGCT";
         region.getReverseComScore();
-        region.getReverseComScore();
+        region.printDetectRel();
         break;
     }
+     */
     //printf("%d\n",chr1NormalSV.vcfNum);
     //ab.print();
     //printf("%d\n",oneVCF::knowFormat);

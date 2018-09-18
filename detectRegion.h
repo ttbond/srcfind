@@ -6,7 +6,9 @@
 #define SRCFIND_DETECTREGION_H
 #include<stdio.h>
 #include<string.h>
+#include<vector>
 #include"ttbond_math.h"
+
 
 class detectRegion {
 public:
@@ -16,15 +18,19 @@ public:
     void localizeFirstBasePos();
     void releaseFirstBasePos(int **&_firstBasePos);
     void release(double *&toRelease);
+    void releaseDetectRel();
     void release(int *&toRelease);
     void revComDfs(int *st,int *ed,int *misMatchSt,int *misMatchEd,int *st2,int *ed2,int *misMatchSt2,int *misMatchEd2,int depth);
     int *getInitMisSt(int iteNum,int **_firstBasePos,int *_cacheForDfs);
     int *getInitMisEd(int iteNum,int **_firstBasePos,int *_cacheForDfs);
     void copyFirstBasePos();
+    void printDetectRel(FILE *fp=NULL);
 
     static bool firstRegion;
     static char *base;
-    static int mismatchNum;
+    static int maxMismatchNum;
+    static int maxDetectLen;
+    static int minDetectLen;
     int chr,st,ed,length;
     //if the region is constructed by two regions in genome
     //this will be used
@@ -32,9 +38,10 @@ public:
     char *agct,*agctEnd;
     double *reverseComScore;
     int **firstBasePos,**firstBasePos2;
-    int *indEndOfFirstBasePos[4];
+    int *indEndOfFirstBasePos[4],*indEndOfFirstBasePos2[4];
     int *cacheForDfs,*cacheForDfs2;
     long long cacheLen;
+    int *detectRel;
 };
 
 

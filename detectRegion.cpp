@@ -7,7 +7,9 @@
 
 char *detectRegion::base=new char[5];
 bool detectRegion::firstRegion=true;
-int detectRegion::mismatchNum=2;
+int detectRegion::maxMismatchNum=2;
+int detectRegion::maxDetectLen=1000;
+int detectRegion::minDetectLen=5;
 
 
 detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed){
@@ -34,6 +36,8 @@ detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed){
     firstBasePos=NULL;
     cacheForDfs=new int[cacheLen];
     reverseComScore=NULL;
+    firstBasePos2=NULL;
+    detectRel=new int[length+10];
 }
 
 //region2 should be at the letf region of region1
@@ -71,6 +75,8 @@ detectRegion::detectRegion(char *str1,int _chr,long long _st1,long long _ed1,cha
     firstBasePos=NULL;
     cacheForDfs=new int[cacheLen];
     reverseComScore=NULL;
+    firstBasePos2=NULL;
+    detectRel=new int[length+10];
 }
 
 void detectRegion::localizeFirstBasePos(){
@@ -116,6 +122,10 @@ void detectRegion::release(int *&toRelease){
     toRelease=NULL;
 }
 
+void detectRegion::releaseDetectRel(){
+    memset(detectRel,0,(length+10)*sizeof(int));
+}
+
 int *detectRegion::getInitMisSt(int iteNum,int **_firstBasePos,int *_cacheForDfs){
     if(_firstBasePos==NULL){
         puts("firstBasePos hasn't been loacalized");
@@ -132,29 +142,135 @@ int *detectRegion::getInitMisEd(int iteNum,int **_firstBasePos,int *_cacheForDfs
 }
 
 void detectRegion::copyFirstBasePos(){
+    if(firstBasePos==NULL){
+        puts("No firstBasePos to copy");
+        exit(-1);
+    }
+    releaseFirstBasePos(firstBasePos2);
+    firstBasePos2=new int*[4];
+    for(int **i=firstBasePos2;i<firstBasePos2+4;i++){
+        (*i)=new int[cacheLen];
+    }
+    for(int i=0;i<4;i++){
+        indEndOfFirstBasePos2[i]=firstBasePos2[i];
+        for(int *j=firstBasePos[i];j<indEndOfFirstBasePos[i];j++){
+            *(indEndOfFirstBasePos2[i]++)=(*j);
+        }
+    }
+    cacheForDfs2=new int[cacheLen];
+    memset(cacheForDfs2,0,cacheLen*sizeof(int));
+}
 
+void detectRegion::printDetectRel(FILE *fp){
+    puts("a");
+    for(int i=0;i<length;i++){
+        printf("%d ",detectRel[i]);
+    }
+    printf("\n");
+    std::vector<int>::iterator it;
+    std::vector<int> tmp[maxDetectLen+10];
+    for(int i=0;i<length;i++){
+        tmp[detectRel[i]].push_back(i);
+    }
+    if(fp==NULL){
+        for(int i=0;i<length;i++){
+            printf("%d ",detectRel[i]);
+        }
+        printf("\n");
+        for(int i=0;i<maxDetectLen;i++){
+            if(tmp[i].size()>0){
+                printf("=%d: ",i);
+                for(it=tmp[i].begin();it!=tmp[i].end();it++){
+                    printf("%d ",*it);
+                }
+                printf("\n");
+            }
+        }
+    }
+    else{
+        for(int i=0;i<length;i++){
+            fprintf(fp,"%d ",detectRel[i]);
+        }
+        fprintf(fp,"\n");
+        for(int i=0;i<maxDetectLen;i++){
+            if(tmp[i].size()>0){
+                fprintf(fp,"=%d: ",i);
+                for(it=tmp[i].begin();it!=tmp[i].end();it++){
+                    fprintf(fp,"%d ",*it);
+                }
+                fprintf(fp,"\n");
+            }
+        }
+    }
 }
 
 void detectRegion::getReverseComScore(){
     release(reverseComScore);
+    releaseDetectRel();
     reverseComScore=new double[length+10];
-    memset(cacheForDfs,0,cacheLen);
+    memset(cacheForDfs,0,cacheLen*sizeof(int));
     localizeFirstBasePos();
     copyFirstBasePos();
     for(int i=0;i<4;i++){
-        revComDfs(firstBasePos[i],indEndOfFirstBasePos[i],getInitMisSt(i,firstBasePos,cacheForDfs),getInitMisEd(i,firstBasePos,cacheForDfs),1);
+        int comBaseNum=nuc2int(getComBase(int2nuc(i)));
+        revComDfs(firstBasePos[i],indEndOfFirstBasePos[i],getInitMisSt(i,firstBasePos,cacheForDfs),getInitMisEd(i,firstBasePos,cacheForDfs),firstBasePos2[comBaseNum],indEndOfFirstBasePos2[comBaseNum],getInitMisSt(comBaseNum,firstBasePos2,cacheForDfs2),getInitMisEd(comBaseNum,firstBasePos2,cacheForDfs2),1);
     }
 }
 
 void detectRegion:: revComDfs(int *st,int *ed,int *misMatchSt,int *misMatchEd,int *st2,int *ed2,int *misMatchSt2,int *misMatchEd2,int depth){
     for(char *nuc=base;nuc<base+4;nuc++) {
-        printf("%c\n",*nuc);
-        /*
-        int *nst = ed, *ned = ed;
-        int *nmst = misMatched, *nmed = misMatched;
-        for (int *i = st; i < ed; i++) {
-            if (*(agct + (*i) + depth))
+        int *nst=ed,*ned=ed;
+        int *nmst = misMatchEd, *nmed = misMatchEd;
+        bool returnFlag=false;
+        for(int *tst=st,*tmst=misMatchSt;tst<ed;tst++,tmst++){
+            int partial=(*tst)+depth;
+            char *nowBase=agct+partial;
+            if(nowBase<agctEnd&&*nowBase!='N'){
+                if(*nowBase==*nuc){
+                    *(ned++)=*tst;
+                    *(nmed++)=*tmst;
+                }
+                else{
+                    if(*tmst<maxMismatchNum){
+                        *(ned++)=*tst;
+                        *(nmed++)=(*tmst)+1;
+                    }
+                    else{
+                        if(depth>minDetectLen){
+                            detectRel[*tst]=max(depth-1,detectRel[*tst]);
+                        }
+                    }
+                }
+            }
         }
-         */
+
+        char tarBase=getComBase(*nuc);
+        int *nst2=ed2,*ned2=ed2;
+        int *nmst2 = misMatchEd2, *nmed2 = misMatchEd2;
+        for(int *tst=st2,*tmst=misMatchSt2;tst<ed2;tst++,tmst++){
+            int partial=(*tst)-depth;
+            char *nowBase=agct+partial;
+            if(nowBase>=agct&&*nowBase!='N'){
+                if(tarBase==*nowBase){
+                    *(ned2++)=*tst;
+                    *(nmed2++)=*tmst;
+                }
+                else{
+                    if(*tmst<maxMismatchNum){
+                        *(ned2++)=*tst;
+                        *(nmed2++)=(*tmst)+1;
+                    }
+                }
+            }
+        }
+
+        if(nst==ned||nst2==ned2||depth>maxDetectLen){
+            for(;nst<ned;nst++){
+                detectRel[*nst]=max(detectRel[*nst],depth-1);
+            }
+        }
+        else{
+            revComDfs(nst,ned,nmst,nmed,nst2,ned2,nmst2,nmed2,depth+1);
+        }
     }
 }

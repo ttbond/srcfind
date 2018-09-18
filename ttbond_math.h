@@ -145,4 +145,10 @@ inline char int2nuc(int num,bool capital=true){
         }
     }
 }
+
+inline int max(int a,int b){
+    if(a>b)return a;
+    return b;
+}
+
 #endif //SRCFIND_TTBOND_MATH_H
