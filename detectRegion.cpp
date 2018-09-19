@@ -9,7 +9,7 @@ char *detectRegion::base=new char[5];
 bool detectRegion::firstRegion=true;
 int detectRegion::maxMismatchNum=2;
 int detectRegion::maxDetectLen=1000;
-int detectRegion::minDetectLen=5;
+int detectRegion::minDetectLen=1;
 
 
 detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed){
@@ -56,15 +56,13 @@ detectRegion::detectRegion(char *str1,int _chr,long long _st1,long long _ed1,cha
     st2=_st2;
     ed2=_ed2;
     chr2=_chr2;
-    length=(ed-st+1)+(ed2-st2+1)+1;
+    length=(ed-st+1)+(ed2-st2+1);
     cacheLen=length*4+10;
     agct=new char[length+10];
     char *i=agct,*j=str1+st-1,*charEd=str1+ed-1;
     for(;j<=charEd;j++,i++){
         (*i)=(*j);
     }
-    (*i)='#';//to separate the two regions
-    i++;
     j=str2+st2-1;
     charEd=str2+ed2-1;
     for(;j<=charEd;j++,i++){
@@ -162,11 +160,11 @@ void detectRegion::copyFirstBasePos(){
 }
 
 void detectRegion::printDetectRel(FILE *fp){
-    puts("a");
     for(int i=0;i<length;i++){
         printf("%d ",detectRel[i]);
     }
     printf("\n");
+    return;
     std::vector<int>::iterator it;
     std::vector<int> tmp[maxDetectLen+10];
     for(int i=0;i<length;i++){
@@ -218,6 +216,27 @@ void detectRegion::getReverseComScore(){
 }
 
 void detectRegion:: revComDfs(int *st,int *ed,int *misMatchSt,int *misMatchEd,int *st2,int *ed2,int *misMatchSt2,int *misMatchEd2,int depth){
+    /*
+    printf("%d\n",depth);
+    for(int *nst=st;nst<ed;nst++){
+        printf("%d ",*nst);
+    }
+    puts("");
+    for(int *nst=misMatchSt;nst<misMatchEd;nst++){
+        printf("%d ",*nst);
+    }
+    puts("");
+
+    for(int *nst=st2;nst<ed2;nst++){
+        printf("%d ",*nst);
+    }
+    puts("");
+    for(int *nst=misMatchSt2;nst<misMatchEd2;nst++){
+        printf("%d ",*nst);
+    }
+    puts("");
+    getchar();
+    */
     for(char *nuc=base;nuc<base+4;nuc++) {
         int *nst=ed,*ned=ed;
         int *nmst = misMatchEd, *nmed = misMatchEd;
@@ -236,10 +255,15 @@ void detectRegion:: revComDfs(int *st,int *ed,int *misMatchSt,int *misMatchEd,in
                         *(nmed++)=(*tmst)+1;
                     }
                     else{
-                        if(depth>minDetectLen){
-                            detectRel[*tst]=max(depth-1,detectRel[*tst]);
+                        if(depth>=minDetectLen){
+                            detectRel[*tst]=max(depth,detectRel[*tst]);
                         }
                     }
+                }
+            }
+            else{
+                if(depth>=minDetectLen){
+                    detectRel[*tst]=max(depth,detectRel[*tst]);
                 }
             }
         }
@@ -266,7 +290,7 @@ void detectRegion:: revComDfs(int *st,int *ed,int *misMatchSt,int *misMatchEd,in
 
         if(nst==ned||nst2==ned2||depth>maxDetectLen){
             for(;nst<ned;nst++){
-                detectRel[*nst]=max(detectRel[*nst],depth-1);
+                detectRel[*nst]=max(detectRel[*nst],depth);
             }
         }
         else{
