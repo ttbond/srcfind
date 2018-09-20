@@ -12,9 +12,9 @@
 
 class detectRegion {
 public:
-    detectRegion(char *str,int _chr,long long _st,long long _ed);
-    detectRegion(char *str1,int _chr,long long _st1,long long _ed1,char *str2,int _chr2,long long _st2,long long _ed2);
-    void getReverseComScore();
+    detectRegion(char *str,int _chr,long long _st,long long _ed,svType _mysv);
+    detectRegion(char *str1,int _chr,long long _st1,long long _ed1,char *str2,int _chr2,long long _st2,long long _ed2,svType _mysv);
+    double *getReverseComScore(FILE *fp=NULL);
     void localizeFirstBasePos();
     void releaseFirstBasePos(int **&_firstBasePos);
     void release(double *&toRelease);
@@ -25,13 +25,16 @@ public:
     int *getInitMisEd(int iteNum,int **_firstBasePos,int *_cacheForDfs);
     void copyFirstBasePos();
     void printDetectRel(FILE *fp=NULL);
+    double *statisticScore(double *score);
 
     static bool firstRegion;
+    static bool firstLineOfFile;
     static char *base;
     static int maxMismatchNum;
     static int maxDetectLen;
     static int minDetectLen;
     int chr,st,ed,length;
+    svType mySv;
     //if the region is constructed by two regions in genome
     //this will be used
     int chr2,st2,ed2;

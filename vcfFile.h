@@ -20,7 +20,8 @@ public:
     vcfFile(std::vector<oneVCF> vcfsVec);
     std::vector<oneVCF> selectByChr(int chrNum,bool notReverse=true);
     std::vector<oneVCF> selectBySv(svType sv,bool notReverse=true);
-    void getDetetionRegions(std::vector<int>&chr,std::vector<long long>&st,std::vector<long long>&st2,std::vector<long long>&ed,std::vector<long long>&ed2,long long maxIdx);
+    void getDetetionRegions(std::vector<int>&chr,std::vector<long long>&st,std::vector<long long>&ed,std::vector<svType>&svs,long long maxIdx);
+    void getDetetionRegions2(std::vector<int>&chr,std::vector<long long>&st,std::vector<long long>&st2,std::vector<long long>&ed,std::vector<long long>&ed2,long long maxIdx);
     oneVCF *basicVCF;
     std::vector<oneVCF> vcfs;
     int vcfNum;

@@ -9,6 +9,24 @@
 
 enum svType{DEL,DUP,INV,INS,OTHER};
 
+
+inline char *svType2str(char *rel,svType tmp){
+    switch(tmp){
+        case DEL:
+            strcpy(rel,"DEL");break;
+        case DUP:
+            strcpy(rel,"DUP");break;
+        case INV:
+            strcpy(rel,"INV");break;
+        case INS:
+            strcpy(rel,"INS");break;
+        case OTHER:
+            strcpy(rel,"OTHER");break;
+    }
+    return rel;
+}
+
+
 //translate a small str data to int data
 inline int stringChrName2int(char *str){
     int rel=0;

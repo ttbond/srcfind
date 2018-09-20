@@ -7,12 +7,13 @@
 
 char *detectRegion::base=new char[5];
 bool detectRegion::firstRegion=true;
-int detectRegion::maxMismatchNum=2;
-int detectRegion::maxDetectLen=1000;
+int detectRegion::maxMismatchNum=0;
+int detectRegion::maxDetectLen=200;
 int detectRegion::minDetectLen=1;
+bool detectRegion::firstLineOfFile=true;
 
 
-detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed){
+detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed,svType _mySv){
     if(firstRegion){
         base[0]='A';
         base[1]='G';
@@ -24,6 +25,7 @@ detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed){
     st=_st;
     ed=_ed;
     chr=_chr;
+    mySv=_mySv;
     length=ed-st+1;
     cacheLen=length*4+10;
     agct=new char[length+10];
@@ -41,7 +43,7 @@ detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed){
 }
 
 //region2 should be at the letf region of region1
-detectRegion::detectRegion(char *str1,int _chr,long long _st1,long long _ed1,char *str2,int _chr2,long long _st2,long long _ed2){
+detectRegion::detectRegion(char *str1,int _chr,long long _st1,long long _ed1,char *str2,int _chr2,long long _st2,long long _ed2,svType _mySv){
     if(firstRegion){
         base[0]='A';
         base[1]='G';
@@ -56,6 +58,7 @@ detectRegion::detectRegion(char *str1,int _chr,long long _st1,long long _ed1,cha
     st2=_st2;
     ed2=_ed2;
     chr2=_chr2;
+    mySv=_mySv;
     length=(ed-st+1)+(ed2-st2+1);
     cacheLen=length*4+10;
     agct=new char[length+10];
@@ -160,49 +163,75 @@ void detectRegion::copyFirstBasePos(){
 }
 
 void detectRegion::printDetectRel(FILE *fp){
+    int tMax=0;
+    /*
     for(int i=0;i<length;i++){
+        tMax=max(tMax,detectRel[i]);
         printf("%d ",detectRel[i]);
     }
-    printf("\n");
-    return;
+    printf("Total lenght:%d MAX:%d\n",length,tMax);
+    */
     std::vector<int>::iterator it;
     std::vector<int> tmp[maxDetectLen+10];
     for(int i=0;i<length;i++){
         tmp[detectRel[i]].push_back(i);
     }
-    if(fp==NULL){
-        for(int i=0;i<length;i++){
-            printf("%d ",detectRel[i]);
+    int *relEd=detectRel+length;
+    for(int *i=detectRel;i<relEd;i++){
+        if(tMax<(*i)){
+            tMax=*i;
         }
-        printf("\n");
-        for(int i=0;i<maxDetectLen;i++){
-            if(tmp[i].size()>0){
-                printf("=%d: ",i);
-                for(it=tmp[i].begin();it!=tmp[i].end();it++){
-                    printf("%d ",*it);
+    }
+    if(fp==NULL){
+        printf("#CHROM CPST CPED ALT ST ED AGCT\n");
+        char tmpCache[10];
+        for(int *i=detectRel;i<relEd;i++){
+            if(*i==tMax){
+                int inPos=i-detectRel;
+                printf("chr%d\t%lld\t%lld\t%s\t%lld\t%lld\t",chr,st,ed,svType2str(tmpCache,mySv),st+inPos,st+inPos+(*i));
+                char *tst=agct+inPos,*ted=agct+inPos+(*i);
+                for(;tst<ted;tst++){
+                    printf("%c",*tst);
                 }
                 printf("\n");
             }
         }
     }
     else{
-        for(int i=0;i<length;i++){
-            fprintf(fp,"%d ",detectRel[i]);
+        if(firstLineOfFile) {
+            fprintf(fp, "#CHROM CPST CPED ALT ST ED AGCT\n");
+            firstLineOfFile = false;
         }
-        fprintf(fp,"\n");
-        for(int i=0;i<maxDetectLen;i++){
-            if(tmp[i].size()>0){
-                fprintf(fp,"=%d: ",i);
-                for(it=tmp[i].begin();it!=tmp[i].end();it++){
-                    fprintf(fp,"%d ",*it);
+        char tmpCache[10];
+        for(int *i=detectRel;i<relEd;i++){
+            if(*i==tMax){
+                int inPos=i-detectRel;
+                fprintf(fp,"chr%d\t%lld\t%lld\t%s\t%lld\t%lld\t",chr,st,ed,svType2str(tmpCache,mySv),st+inPos,st+inPos+(*i));
+                char *tst=agct+inPos,*ted=agct+inPos+(*i);
+                for(;tst<ted;tst++){
+                    fprintf(fp,"%c",*tst);
                 }
                 fprintf(fp,"\n");
             }
         }
+
     }
 }
 
-void detectRegion::getReverseComScore(){
+double *detectRegion::statisticScore(double *score){
+    memset(score,0,length*sizeof(double));
+    double *edOfScore=score+length;
+    int *tdetectRel=detectRel;
+    for(double *i=score;i<edOfScore;i++,tdetectRel++){
+        double *ti=i,*iEd=i+(*tdetectRel);
+        for(;ti<iEd;ti++){
+            (*ti)+=1;
+        }
+    }
+    return score;
+}
+
+double  *detectRegion::getReverseComScore(FILE *fp){
     release(reverseComScore);
     releaseDetectRel();
     reverseComScore=new double[length+10];
@@ -213,6 +242,15 @@ void detectRegion::getReverseComScore(){
         int comBaseNum=nuc2int(getComBase(int2nuc(i)));
         revComDfs(firstBasePos[i],indEndOfFirstBasePos[i],getInitMisSt(i,firstBasePos,cacheForDfs),getInitMisEd(i,firstBasePos,cacheForDfs),firstBasePos2[comBaseNum],indEndOfFirstBasePos2[comBaseNum],getInitMisSt(comBaseNum,firstBasePos2,cacheForDfs2),getInitMisEd(comBaseNum,firstBasePos2,cacheForDfs2),1);
     }
+    statisticScore(reverseComScore);
+    double *scoreEd=reverseComScore+length;
+    fprintf(fp,"%d %lld %lld\n",chr,st,ed);
+    if(fp!=NULL){
+        for(double *i=reverseComScore;i<scoreEd;i++){
+            fprintf(fp,"%.0lf ",(*i));
+        }
+    }
+    fprintf(fp,"\n");
 }
 
 void detectRegion:: revComDfs(int *st,int *ed,int *misMatchSt,int *misMatchEd,int *st2,int *ed2,int *misMatchSt2,int *misMatchEd2,int depth){
