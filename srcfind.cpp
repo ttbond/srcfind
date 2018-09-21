@@ -28,25 +28,31 @@ int main()
     int regionNum=chr.size();
     /* for test;
 
-    detectRegion region("AGCTAGCT",1,1,8);
-    region.getReverseComScore();
-    region.printDetectRel();
+    detectRegion region("AGCTTCGAAGCT",1,1,12,DEL);
+    region.getMirrorRepeatScore();
+    return 0;
     */
 
      //
     //
     FILE *fp=fopen("chr1.rcf","w");
-    FILE *scrFile=fopen("chr1.scr","w");
+    FILE *mirFile=fopen("chr1MirRep.scr","w");
+    FILE *dirFile=fopen("chr1DirRep.scr","w");
+    FILE *revFile=fopen("chr1RevRep.scr","w");
     double maxLen=0;
     for(int i=0;i<regionNum;i++){
         //detectRegion region(agct,chr[i],st[i],ed[i],agct,chr[i],st2[i],ed2[i]);
         detectRegion region(agct,chr[i],st[i],ed[i],svs[i]);
-        region.getReverseComScore(scrFile);
+        region.getMirrorRepeatScore(mirFile);
+        region.getDirectRepeatScore(dirFile);
+        region.getReverseComScore(revFile);
         //region.printDetectRel(fp);
         //getchar();
     }
     fclose(fp);
-    fclose(scrFile);
+    fclose(mirFile);
+    fclose(dirFile);
+    fclose(revFile);
      //
     //printf("%d\n",chr1NormalSV.vcfNum);
     //ab.print();

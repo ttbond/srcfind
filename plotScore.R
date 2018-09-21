@@ -12,20 +12,27 @@ readLineToStrList<- function(fileLink){
   return(line)
 }
 
-scrFile<-file("chr1.scr",'r')
+mirScrFile<-file("chr1MirRep.scr",'r')
+dirScrFile<-file("chr1DirRep.scr",'r')
+revScrFile<-file("chr1.scr",'r')
 lineNum<-0
 while(TRUE){
-  rangeData=readLineToNumList(scrFile)
+  rangeData=readLineToStrList(revScrFile)
+  readLineToStrList(mirScrFile)
+  readLineToStrList(dirScrFile)
   if(length(rangeData)==0){
     break
   }
-  pos<-c(rangeData[2]:rangeData[3])
-  scoreData<-readLineToNumList(scrFile)
-  imageData<-data.frame(pos,scoreData)
-  scoreImage<-ggplot(data=imageData,aes(x=pos,y=scoreData))+
-    geom_line(size=0.9)
-  png(filename=paste(paste(paste('chr',as.character(rangeData[1]),sep=''),as.character(rangeData[2]),as.character(rangeData[3]),sep='_'),'.png',sep=''),width=874,height=566)
+  pos<-c(as.numeric(rangeData[2]):as.numeric(rangeData[3]))
+  scoreData<-readLineToNumList(revScrFile)
+  typeData<-c(rep('rev',length(scoreData)),rep('dir',length(scoreData)),rep('mir',length(scoreData)))
+  scoreData<-c(scoreData,readLineToNumList(dirScrFile))
+  scoreData<-c(scoreData,readLineToNumList(mirScrFile))
+  
+  imageData<-data.frame(pos,scoreData,typeData)
+  scoreImage<-ggplot()+
+    geom_line(data=imageData,aes(x=pos,y=scoreData,color=typeData))
+  png(filename=paste('./chr1All/',paste(paste('chr',rangeData[1],sep=''),rangeData[2],rangeData[3],rangeData[4],sep='_'),'.png',sep=''),width=1755,height=566)
   print(scoreImage)
   dev.off()
-  break
 }
