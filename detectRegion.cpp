@@ -27,7 +27,7 @@ detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed,svType
     chr=_chr;
     mySv=_mySv;
     length=ed-st+1;
-    cacheLen=length*4+10;
+    cacheLen=max(20000,length*10+10);
     agct=new char[length+10];
     char *i=agct,*j=str+st-1,*charEd=str+ed-1;
     for(;j<=charEd;j++,i++){
@@ -282,6 +282,7 @@ double *detectRegion::getDirectRepeatScore(FILE *fp) {
     }
     statisticScore(directRepScore);
     printScore(directRepScore,directRepScore+length,fp);
+    release(directRepScore);
 }
 
 double  *detectRegion::getMirrorRepeatScore(FILE *fp){
@@ -296,6 +297,7 @@ double  *detectRegion::getMirrorRepeatScore(FILE *fp){
     }
     statisticScore(mirrorRepScore);
     printScore(mirrorRepScore,mirrorRepScore+length,fp);
+    release(directRepScore);
 }
 
 

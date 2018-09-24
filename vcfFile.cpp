@@ -71,7 +71,7 @@ void vcfFile::getDetetionRegions(std::vector<int>&chr,std::vector<long long>&st,
     std::vector<oneVCF>::iterator it;
     for(it=vcfs.begin();it!=vcfs.end();it++){
         oneVCF &tmp=(*it);
-        int width=5000;
+        int width=200;
         chr.push_back(tmp.chr);
         st.push_back(std::max((long long)0,tmp.st-width-1));
         ed.push_back(std::min(maxIdx,tmp.ed+width-1));

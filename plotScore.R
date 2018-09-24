@@ -14,7 +14,7 @@ readLineToStrList<- function(fileLink){
 
 mirScrFile<-file("chr1MirRep.scr",'r')
 dirScrFile<-file("chr1DirRep.scr",'r')
-revScrFile<-file("chr1.scr",'r')
+revScrFile<-file("chr1RevRep.scr",'r')
 lineNum<-0
 while(TRUE){
   rangeData=readLineToStrList(revScrFile)
@@ -36,3 +36,6 @@ while(TRUE){
   print(scoreImage)
   dev.off()
 }
+mirScrFile.close()
+dirScrFile.close()
+revScrFile.close()
