@@ -84,6 +84,34 @@ detectRegion::detectRegion(char *str1,int _chr,long long _st1,long long _ed1,cha
     detectRel=new int[length+10];
 }
 
+
+detectRegion::detectRegion(char *_agct) {
+    if(firstRegion){
+        base[0]='A';
+        base[1]='G';
+        base[2]='C';
+        base[3]='T';
+        base[4]='\0';
+        firstRegion=false;
+    }
+    st=1;
+    ed=strlen(_agct);
+    chr=-1;
+    mySv=OTHER;
+    length=ed-st+1;
+    cacheLen=max(20000,length*10+10);
+    agct=new char[length+10];
+    strcpy(agct,_agct);
+    agctEnd=agct+length;
+    firstBasePos=NULL;
+    cacheForDfs=new int[cacheLen];
+    reverseComScore=NULL;
+    directRepScore=NULL;
+    mirrorRepScore=NULL;
+    firstBasePos2=NULL;
+    detectRel=new int[length+10];
+}
+
 void detectRegion::localizeFirstBasePos(){
     releaseFirstBasePos(firstBasePos);
     firstBasePos=new int*[4];
@@ -242,15 +270,17 @@ void detectRegion::printScore(double *score,double *scoreEd,FILE *fp){
     fprintf(fp,"\n");
 }
 
-double *detectRegion::statisticScore(double *score){
+double *detectRegion::statisticScore(double *score,double &sumScore,FILE *fp){
     memset(score,0,length*sizeof(double));
     double *edOfScore=score+length;
     int *tdetectRel=detectRel;
-    for(double *i=score;i<edOfScore;i++,tdetectRel++){
-        double *ti=i,*iEd=i+(*tdetectRel);
-        for(;ti<iEd;ti++){
-            (*ti)+=1;
+    sumScore=0;
+    for(double *i=score;i<edOfScore;i++,tdetectRel++) {
+        double *ti = i, *iEd = i + (*tdetectRel);
+        for (; ti < iEd; ti++) {
+            (*ti) += 1;
         }
+        sumScore+=(*i);
     }
     return score;
 }
@@ -266,7 +296,7 @@ double  *detectRegion::getReverseComScore(FILE *fp){
         int comBaseNum=nuc2int(getComBase(int2nuc(i)));
         revComDfs(firstBasePos[i],indEndOfFirstBasePos[i],getInitMisSt(i,firstBasePos,cacheForDfs),getInitMisEd(i,firstBasePos,cacheForDfs),firstBasePos2[comBaseNum],indEndOfFirstBasePos2[comBaseNum],getInitMisSt(comBaseNum,firstBasePos2,cacheForDfs2),getInitMisEd(comBaseNum,firstBasePos2,cacheForDfs2),1);
     }
-    statisticScore(reverseComScore);
+    statisticScore(reverseComScore,sumRevComScore);
     printScore(reverseComScore,reverseComScore+length,fp);
 }
 
@@ -280,7 +310,7 @@ double *detectRegion::getDirectRepeatScore(FILE *fp) {
     for(int i=0;i<4;i++){
         dirRepDfs(firstBasePos[i],indEndOfFirstBasePos[i],getInitMisSt(i,firstBasePos,cacheForDfs),getInitMisEd(i,firstBasePos,cacheForDfs),1);
     }
-    statisticScore(directRepScore);
+    statisticScore(directRepScore,sumDirRepScore);
     printScore(directRepScore,directRepScore+length,fp);
     release(directRepScore);
 }
@@ -295,7 +325,7 @@ double  *detectRegion::getMirrorRepeatScore(FILE *fp){
     for(int i=0;i<4;i++){
         mirRepDfs(firstBasePos[i],indEndOfFirstBasePos[i],getInitMisSt(i,firstBasePos,cacheForDfs),getInitMisEd(i,firstBasePos,cacheForDfs),firstBasePos2[i],indEndOfFirstBasePos2[i],getInitMisSt(i,firstBasePos2,cacheForDfs2),getInitMisEd(i,firstBasePos2,cacheForDfs2),1);
     }
-    statisticScore(mirrorRepScore);
+    statisticScore(mirrorRepScore,sumMirRepScore);
     printScore(mirrorRepScore,mirrorRepScore+length,fp);
     release(directRepScore);
 }

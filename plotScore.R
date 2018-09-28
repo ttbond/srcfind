@@ -32,10 +32,10 @@ while(TRUE){
   imageData<-data.frame(pos,scoreData,typeData)
   scoreImage<-ggplot()+
     geom_line(data=imageData,aes(x=pos,y=scoreData,color=typeData))
-  png(filename=paste('./chr1All/',paste(paste('chr',rangeData[1],sep=''),rangeData[2],rangeData[3],rangeData[4],sep='_'),'.png',sep=''),width=1755,height=566)
+  png(filename=paste('./tmpStr/',paste(paste('chr',rangeData[1],sep=''),rangeData[2],rangeData[3],rangeData[4],sep='_'),'.png',sep=''),width=1755,height=566)
   print(scoreImage)
   dev.off()
 }
-mirScrFile.close()
-dirScrFile.close()
-revScrFile.close()
+close(mirScrFile)
+close(dirScrFile)
+close(revScrFile)

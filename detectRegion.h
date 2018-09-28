@@ -12,6 +12,7 @@
 
 class detectRegion {
 public:
+    detectRegion(char *fileName);
     detectRegion(char *str,int _chr,long long _st,long long _ed,svType _mysv);
     detectRegion(char *str1,int _chr,long long _st1,long long _ed1,char *str2,int _chr2,long long _st2,long long _ed2,svType _mysv);
     double *getReverseComScore(FILE *fp=NULL);
@@ -30,7 +31,7 @@ public:
     void copyFirstBasePos();
     void printDetectRel(FILE *fp=NULL,bool test=false);
     void printScore(double *score,double *scoreEd,FILE *fp);
-    double *statisticScore(double *score);
+    double *statisticScore(double *score,double &sumScore,FILE *fp=NULL);
 
     static bool firstRegion;
     static bool firstLineOfFile;
@@ -44,9 +45,9 @@ public:
     //this will be used
     int chr2,st2,ed2;
     char *agct,*agctEnd;
-    double *reverseComScore;
-    double *directRepScore;
-    double *mirrorRepScore;
+    double *reverseComScore,sumRevComScore;
+    double *directRepScore,sumDirRepScore;
+    double *mirrorRepScore,sumMirRepScore;
     int **firstBasePos,**firstBasePos2;
     int *indEndOfFirstBasePos[4],*indEndOfFirstBasePos2[4];
     int *cacheForDfs,*cacheForDfs2;

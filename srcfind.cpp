@@ -12,8 +12,28 @@
 
 char agct[300000000];
 
+
+
+
 int main()
 {
+    FILE *fp=fopen("/home/ttbond/桌面/From JD/201809/repeat Regions/2/_leftBp.fa","r");
+    fgets(agct,1000000,fp);
+    agct[strlen(agct)-1]='\0';
+    FILE *mirFile=fopen("chr1MirRep.scr","w");
+    FILE *dirFile=fopen("chr1DirRep.scr","w");
+    FILE *revFile=fopen("chr1RevRep.scr","w");
+    detectRegion region(agct);
+    region.getMirrorRepeatScore(mirFile);
+    region.getDirectRepeatScore(dirFile);
+    region.getReverseComScore(revFile);
+    fclose(mirFile);
+    fclose(dirFile);
+    fclose(revFile);
+    return 0;
+
+
+/*
     long long agctLen=loadAgctByChr(1,"GRCh38.d1.vd1.fa",agct);
     vcfFile myVcfFile("NA19240.vcf");
     vcfFile chr1SV(myVcfFile.selectByChr(1));
@@ -26,12 +46,6 @@ int main()
     //std::vector<long long>ed2;
     chr1SV.getDetetionRegions(chr,st,ed,svs,agctLen);
     int regionNum=chr.size();
-    /* for test;
-
-    detectRegion region("AGCTTCGAAGCT",1,1,12,DEL);
-    region.getMirrorRepeatScore();
-    return 0;
-    */
 
      //
     //
@@ -60,4 +74,5 @@ int main()
     //char *fileName="GRCh38.d1.vd1.fa";
     //loadAgctByChr(11,fileName,agct);
     return 0;
+*/
 }
