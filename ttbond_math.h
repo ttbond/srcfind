@@ -40,6 +40,9 @@ inline int stringChrName2int(char *str){
     if((*i)=='x'||(*i)=='X'){
         return 23;
     }
+    if((*i)=='y'||(*i)=='Y'){
+        return 24;
+    }
     for(;(*i)!='\0';i++){
         rel*=10;
         rel+=(*i)-'0';

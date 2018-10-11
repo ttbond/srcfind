@@ -41,6 +41,8 @@ std::vector<oneVCF> vcfFile::selectByChr(int chrNum,bool notReverse){
     printf("successfully select %lld svs\n",rel.size());
     return rel;
 }
+
+//notReverse is false means to except sv
 std::vector<oneVCF> vcfFile::selectBySv(svType sv,bool notReverse){
     printf("selecting by svType from %lld svs...\n",vcfNum);
     std::vector<oneVCF>::iterator it;
@@ -61,7 +63,6 @@ void vcfFile::getDetetionRegions2(std::vector<int>&chr,std::vector<long long>&st
         oneVCF &tmp=(*it);
         int width=std::min(std::max((long long)1000,tmp.length*2),(long long)5000);
         chr.push_back(tmp.chr);
-
         st.push_back(std::max((long long)0,tmp.st-width));
         ed.push_back(std::min(maxIdx,tmp.ed+width));
     }
@@ -75,6 +76,27 @@ void vcfFile::getDetetionRegions(std::vector<int>&chr,std::vector<long long>&st,
         chr.push_back(tmp.chr);
         st.push_back(std::max((long long)0,tmp.st-width-1));
         ed.push_back(std::min(maxIdx,tmp.ed+width-1));
+        svs.push_back(tmp.sv);
+    }
+}
+
+void vcfFile::getDetRegBpSides(char side,long long size,std::vector<int>&chr,std::vector<long long>&st,std::vector<long long>&ed,std::vector<svType>&svs,long long maxIdx){
+    if(side!='L'&&side!='R'){
+        printf("para side in getDetRegBpSide wrong!\n");
+        exit(-1);
+    }
+    std::vector<oneVCF>::iterator it;
+    for(it=vcfs.begin();it!=vcfs.end();it++){
+        oneVCF &tmp=(*it);
+        chr.push_back(tmp.chr);
+        if(side=='L') {
+            st.push_back(std::max((long long) 0, tmp.st - size - 1));
+            ed.push_back(std::min(tmp.st + size - 1, tmp.ed));
+        }
+        if(side=='R'){
+            st.push_back(std::max(tmp.st,tmp.ed-size-1));
+            ed.push_back(std::min(tmp.ed+size-1,maxIdx));
+        }
         svs.push_back(tmp.sv);
     }
 }

@@ -20,7 +20,30 @@ solRel::solRel(detectRegion &source) {
     sumRevComScore=getSum(source.reverseComScore,source.reverseComScore+source.length);
     sumDirRepScore=getSum(source.directRepScore,source.directRepScore+source.length);
     sumMirRepScore=getSum(source.mirrorRepScore,source.mirrorRepScore+source.length);
+    meanRevComScore=getMean(source.reverseComScore,source.reverseComScore+source.length);
+    meanDirRepScore=getMean(source.directRepScore,source.directRepScore+source.length);
+    meanMirRepScore=getMean(source.mirrorRepScore,source.mirrorRepScore+source.length);
+}
 
+solRel::solRel(const solRel &source) {
+    maxSelectP=0.8;
+    info=new basicInfo(*(source.info));
+    maxRevComScore=source.maxRevComScore;
+    maxDirRepScore=source.maxDirRepScore;
+    maxMirRepScore=source.maxMirRepScore;
+    lengthMaxRev=source.lengthMaxRev;
+    lengthMaxDir=source.lengthMaxDir;
+    lengthMaxMir=source.lengthMaxMir;
+    sumRevComScore=source.sumRevComScore;
+    sumDirRepScore=source.sumDirRepScore;
+    sumMirRepScore=source.sumMirRepScore;
+    meanRevComScore=source.meanRevComScore;
+    meanDirRepScore=source.meanDirRepScore;
+    meanMirRepScore=source.meanMirRepScore;
+}
+
+solRel::~solRel(){
+    delete info;
 }
 
 double solRel::getMax(double *st, double *ed) {
@@ -50,3 +73,13 @@ long long solRel::getSpeLen(double *st, double *ed, double bar) {
     }
     return len;
 }
+
+double solRel::getMean(double *st, double *ed) {
+    double sum=getSum(st,ed);
+    return sum/(ed-st);
+}
+
+void solRel::printMe(FILE *fp){
+    fprintf(fp,"%.2lf\t%.2lf\t%.2lf\t",meanDirRepScore,meanMirRepScore,meanRevComScore);
+}
+

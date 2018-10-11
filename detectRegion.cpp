@@ -154,6 +154,21 @@ void detectRegion::release(int *&toRelease){
     }
     toRelease=NULL;
 }
+void detectRegion::release(char *&toRelease){
+    if(toRelease!=NULL){
+        delete toRelease;
+    }
+    toRelease=NULL;
+}
+void detectRegion::release(int **&toRelease){
+    if(toRelease!=NULL) {
+        for (int i = 0; i < 4; i++) {
+            delete *(toRelease + i);
+        }
+    }
+    delete toRelease;
+    toRelease=NULL;
+}
 
 void detectRegion::releaseDetectRel(){
     memset(detectRel,0,(length+10)*sizeof(int));
@@ -254,6 +269,7 @@ void detectRegion::printDetectRel(FILE *fp,bool test){
 void detectRegion::printScore(double *score,double *scoreEd,FILE *fp){
     char chrCache[10];
     if(fp==NULL){
+        return;
         printf("%d %lld %lld %s\n",chr,st,ed,svType2str(chrCache,mySv));
         for(double *i=score;i<scoreEd;i++){
             printf("%.0lf ",(*i));
@@ -263,6 +279,7 @@ void detectRegion::printScore(double *score,double *scoreEd,FILE *fp){
     }
     fprintf(fp,"%d %lld %lld %s\n",chr,st,ed,svType2str(chrCache,mySv));
     if(fp!=NULL){
+        fprintf(fp,"%s\n",agct);
         for(double *i=score;i<scoreEd;i++){
             fprintf(fp,"%.0lf ",(*i));
         }
@@ -312,7 +329,7 @@ double *detectRegion::getDirectRepeatScore(FILE *fp) {
     }
     statisticScore(directRepScore,sumDirRepScore);
     printScore(directRepScore,directRepScore+length,fp);
-    release(directRepScore);
+    //release(directRepScore);
 }
 
 double  *detectRegion::getMirrorRepeatScore(FILE *fp){
@@ -327,7 +344,7 @@ double  *detectRegion::getMirrorRepeatScore(FILE *fp){
     }
     statisticScore(mirrorRepScore,sumMirRepScore);
     printScore(mirrorRepScore,mirrorRepScore+length,fp);
-    release(directRepScore);
+    //release(directRepScore);
 }
 
 
@@ -513,4 +530,27 @@ void detectRegion:: mirRepDfs(int *st,int *ed,int *misMatchSt,int *misMatchEd,in
             mirRepDfs(nst,ned,nmst,nmed,nst2,ned2,nmst2,nmed2,depth+1);
         }
     }
+}
+bool detectRegion::operator <(detectRegion &right){
+    if(chr!=right.chr){
+        return chr<right.chr;
+    }
+    else if(st!=right.st){
+        return st<right.st;
+    }
+    else{
+        return ed<right.ed;
+    }
+}
+
+detectRegion::~detectRegion(){
+    releaseDetectRel();
+    release(reverseComScore);
+    release(directRepScore);
+    release(mirrorRepScore);
+    release(agct);
+    release(firstBasePos);
+    release(firstBasePos2);
+    release(cacheForDfs);
+    release(cacheForDfs2);
 }
