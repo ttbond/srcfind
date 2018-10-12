@@ -24,10 +24,10 @@ int main(){
         printf("%c",agct[i]);
     }
     */
-    /*
+
     geneRegionFile grf("./geneExons/geneExonCancer.bed",agct);
     grf.solAndPrintRel();
-    */
+
     /*
     bedFile bf("./geneExons/questionCancerGene.bed",agct);
     bf.solAndPrint();
