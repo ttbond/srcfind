@@ -11,6 +11,7 @@
 #include"basicInfo.cpp"
 #include"detectRegion.h"
 #include"detectRegion.cpp"
+#include"ttbond_fa.h"
 
 
 class bedFile {

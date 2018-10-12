@@ -39,3 +39,12 @@ bool basicInfo::operator <(basicInfo &right){
 bool basicInfo::operator ==(basicInfo &right){
     return chr==right.chr&&st==right.st&&ed==right.ed&&sv==right.sv;
 }
+
+void basicInfo::printMe(FILE *fp) {
+    if(fp==NULL){
+        printf("chr:%d st:%lld ed:%lld\n",chr,st,ed);
+    }
+    else{
+        fprintf(fp,"%d %lld %lld\n",chr,st,ed);
+    }
+}

@@ -13,6 +13,7 @@ public:
     basicInfo(int _chr,long long _st,long long _ed,svType _sv=OTHER);
     bool operator <(basicInfo &right);
     bool operator ==(basicInfo &right);
+    void printMe(FILE *fp=NULL);
 
     int chr;
     long long st,ed;

@@ -23,11 +23,17 @@ bedFile::bedFile(char *fileName,char *_agct) {
 
 void bedFile::solAndPrint() {
     std::vector<basicInfo>::iterator it;
-    FILE *fp=fopen("questionCancerGeneScore.dat","w");
+    FILE *fp=fopen("./geneExons/questionCancerGeneScore.dat","w");
+    int refChr=0;
     for(it=myRegion.begin();it!=myRegion.end();it++){
+        if(refChr!=(*it).chr){
+            refChr=(*it).chr;
+            loadAgctByChr(refChr,"GRCh38.d1.vd1.fa",agct);
+        }
         detectRegion region(agct,(*it).chr,(*it).st,(*it).ed,(*it).sv);
         region.getReverseComScore(fp);
         region.getDirectRepeatScore(fp);
         region.getMirrorRepeatScore(fp);
     }
 }
+

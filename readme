@@ -1,0 +1,12 @@
+d__geneExons: the gene regions bed files
+	f__cancer_associatedGenes.txt: the names of cancer associatedGenes
+	f__geneExon.bed: the bed file of gene exon regions[chr stpos edpos name]. It is normal that one gene has several exon regions.
+	f__name2id.dat: the name of the exon and its id per line
+	f__geneExonId.bed: translate the name to id in geneExon.bed
+	f__geneExonCancer.bed: select cancer gene from geneExonId.bed
+	f__geneExonNoCancer.bed: select no cancer gene from geneExonId.bed
+s__selectGene.py: split the geneExon.bed into two bed files according to wether associated with cancer
+	__input: geneExons/ cancer_associatedGenes.txt geneExon.bed
+	__output: geneExons/ name2id.dat geneExonId.bed geneExonCancer.bed geneExonNoCancer.bed
+f__geneMotifScore: the score of gene exon
+	__format: 1(the id of gene)\t2(the rank the exon exits in the gene)\t3(meanDirScore)\t4(meanMirScore)\t5(meanRevScore)

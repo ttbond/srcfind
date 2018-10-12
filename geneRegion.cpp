@@ -40,11 +40,6 @@ void geneRegion::addRegion(char *source){
     char _chr[10];
     long long _st,_ed;
     sscanf(source,"%s%lld%lld",_chr,&_st,&_ed);
-    if(stringChrName2int(_chr)==41){
-        puts(_chr);
-        printf("%d\n",id);
-        getchar();
-    }
     addRegion(stringChrName2int(_chr),_st,_ed);
 }
 void geneRegion::addRegion(int _chr,long long _st,long long _ed){
@@ -57,6 +52,9 @@ void geneRegion::solAndPrintRel(FILE *fp){
     myInfo.erase(newEnd,myInfo.end());
     int exonNum=myInfo.size();
     for(int i=0;i<exonNum;i++){
+        if(myInfo[i].chr==24){
+            continue;
+        }
         if(myInfo[i].chr!=refChr){
             refChr=myInfo[i].chr;
             loadAgctByChr(refChr,"GRCh38.d1.vd1.fa",agct);
@@ -70,7 +68,11 @@ void geneRegion::solAndPrintRel(FILE *fp){
         myRel.push_back(solRel(region));
     }
     for(int i=0;i<exonNum;i++){
-        fprintf(fp,"%d\t%d\t",id,i+1);
+        if(myInfo[i].chr==24){
+            continue;
+        }
+        fprintf(fp,"%s\t%d\t",id2name[id].c_str(),i+1);
+        //fprintf(fp,"%d\t%d\t",id,i+1);
         myRel[i].printMe(fp);
         fprintf(fp,"\n");
     }

@@ -4,6 +4,7 @@
 
 #ifndef SRCFIND_TTBOND_FA_H
 #define SRCFIND_TTBOND_FA_H
+#include<stdio.h>
 #include "ttbond_math.h"
 //if the chr data is a normal chr return true
 inline bool isRegularChr(char *str){
@@ -16,6 +17,10 @@ inline bool isRegularChr(char *str){
         char *i;
         for(i=str+4;(*i)>='0'&&(*i)<='9';i++){
             firstNum=true;
+        }
+        if(firstNum==false&&(*(str+4)=='X'||*(str+4)=='Y'||*(str+4)=='x'||*(str+4)=='y')){
+            firstNum=true;
+            i=str+5;
         }
         if((*i)!=' '||firstNum==false){
             return false;
@@ -52,11 +57,7 @@ long long loadAgctByChr(int chrNum,char *fileName,char *agct){
     char tmp[1000];
     while(fgets(tmp,1000,fp)!=NULL){
         if(tmp[0]=='>'&&isRegularChr(tmp)){
-            char *j=chrName;
-            for(char *i=tmp+4;(*i)>='0'&&(*i)<='9';i++){
-                *j++=*i;
-            }
-            *j='\0';
+            sscanf(tmp+4,"%s",chrName);
             int chrN=stringChrName2int(chrName);
             if(chrN==chrNum){
                 findChr=true;

@@ -23,6 +23,11 @@ solRel::solRel(detectRegion &source) {
     meanRevComScore=getMean(source.reverseComScore,source.reverseComScore+source.length);
     meanDirRepScore=getMean(source.directRepScore,source.directRepScore+source.length);
     meanMirRepScore=getMean(source.mirrorRepScore,source.mirrorRepScore+source.length);
+    /*if(meanMirRepScore<0.001){
+        info->printMe();
+        printf("%s\n",source.agct);
+        getchar();
+    }*/
 }
 
 solRel::solRel(const solRel &source) {
@@ -40,6 +45,10 @@ solRel::solRel(const solRel &source) {
     meanRevComScore=source.meanRevComScore;
     meanDirRepScore=source.meanDirRepScore;
     meanMirRepScore=source.meanMirRepScore;
+    /*if(meanMirRepScore==0.00){
+        info->printMe();
+        getchar();
+    }*/
 }
 
 solRel::~solRel(){
