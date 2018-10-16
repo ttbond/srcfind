@@ -74,6 +74,7 @@ void geneRegion::solAndPrintRel(FILE *fp){
         fprintf(fp,"%s\t%d\t",id2name[id].c_str(),i+1);
         //fprintf(fp,"%d\t%d\t",id,i+1);
         myRel[i].printMe(fp);
+        myRel[i].info->printRange(fp);
         fprintf(fp,"\n");
     }
 }

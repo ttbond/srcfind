@@ -1,7 +1,8 @@
 //
 // Created by ttbond on 18-9-16.
 //
-
+#ifndef SRCFIND_DETECTREGION_CPP
+#define SRCFIND_DETECTREGION_CPP
 #include <cstring>
 #include "detectRegion.h"
 
@@ -27,7 +28,7 @@ detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed,svType
     chr=_chr;
     mySv=_mySv;
     length=ed-st+1;
-    cacheLen=max(20000,length*10+10);
+    cacheLen=max(20000,length*30+10);
     agct=new char[length+10];
     char *i=agct,*j=str+st-1,*charEd=str+ed-1;
     for(;j<=charEd;j++,i++){
@@ -37,6 +38,7 @@ detectRegion::detectRegion(char *str,int _chr,long long _st,long long _ed,svType
     agctEnd=agct+length;
     firstBasePos=NULL;
     cacheForDfs=new int[cacheLen];
+    cacheForDfs2=NULL;
     reverseComScore=NULL;
     directRepScore=NULL;
     mirrorRepScore=NULL;
@@ -135,38 +137,38 @@ void detectRegion::localizeFirstBasePos(){
 void detectRegion::releaseFirstBasePos(int **&_firstBasePos){
     if(_firstBasePos!=NULL){
         for(int i=0;i<4;i++){
-            delete _firstBasePos[i];
+            delete[] _firstBasePos[i];
         }
     }
-    delete _firstBasePos;
+    delete[] _firstBasePos;
     _firstBasePos=NULL;
 }
 
 void detectRegion::release(double *&toRelease){
     if(toRelease!=NULL){
-        delete toRelease;
+        delete[] toRelease;
     }
     toRelease=NULL;
 }
 void detectRegion::release(int *&toRelease){
     if(toRelease!=NULL){
-        delete toRelease;
+        delete[] toRelease;
     }
     toRelease=NULL;
 }
 void detectRegion::release(char *&toRelease){
     if(toRelease!=NULL){
-        delete toRelease;
+        delete[] toRelease;
     }
     toRelease=NULL;
 }
 void detectRegion::release(int **&toRelease){
     if(toRelease!=NULL) {
         for (int i = 0; i < 4; i++) {
-            delete *(toRelease + i);
+            delete[] *(toRelease + i);
         }
     }
-    delete toRelease;
+    delete[] toRelease;
     toRelease=NULL;
 }
 
@@ -205,6 +207,7 @@ void detectRegion::copyFirstBasePos(){
             *(indEndOfFirstBasePos2[i]++)=(*j);
         }
     }
+    release(cacheForDfs2);
     cacheForDfs2=new int[cacheLen];
     memset(cacheForDfs2,0,cacheLen*sizeof(int));
 }
@@ -544,7 +547,6 @@ bool detectRegion::operator <(detectRegion &right){
 }
 
 detectRegion::~detectRegion(){
-    releaseDetectRel();
     release(reverseComScore);
     release(directRepScore);
     release(mirrorRepScore);
@@ -553,4 +555,6 @@ detectRegion::~detectRegion(){
     release(firstBasePos2);
     release(cacheForDfs);
     release(cacheForDfs2);
+    release(detectRel);
 }
+#endif

@@ -18,3 +18,4 @@ source$V1<-as.character(source$V1)
 source[which(source[1,]=='23'),1]='X'
 source[which(source[1,]=='24'),1]='Y'
 write.table(source,"questionCancerGene.bed",quote=FALSE,row.names=FALSE,col.names=FALSE,sep='\t')
+

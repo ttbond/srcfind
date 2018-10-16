@@ -1,7 +1,8 @@
 //
 // Created by ttbond on 18-9-26.
 //
-
+#ifndef SRCFIND_BASICINFO_CPP
+#define SRCFIND_BASICINFO_CPP
 #include "basicInfo.h"
 basicInfo::basicInfo(){
     chr=-1;
@@ -45,6 +46,20 @@ void basicInfo::printMe(FILE *fp) {
         printf("chr:%d st:%lld ed:%lld\n",chr,st,ed);
     }
     else{
-        fprintf(fp,"%d %lld %lld\n",chr,st,ed);
+        fprintf(fp,"%d\t%lld\t%lld\t",chr,st,ed);
     }
 }
+
+void basicInfo::printRange(FILE *fp){
+    if(fp==NULL){
+        printf("range:%lld\n",ed-st);
+    }
+    else{
+        fprintf(fp,"%lld\t",ed-st);
+    }
+}
+
+long long basicInfo::getLength() {
+    return ed-st+1;
+}
+#endif

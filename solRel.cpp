@@ -1,7 +1,8 @@
 //
 // Created by ttbond on 18-9-26.
 //
-
+#ifndef SRCFIND_SOLREL_CPP
+#define SRCFIND_SOLREL_CPP
 #include "solRel.h"
 
 solRel::solRel() {
@@ -92,3 +93,4 @@ void solRel::printMe(FILE *fp){
     fprintf(fp,"%.2lf\t%.2lf\t%.2lf\t",meanDirRepScore,meanMirRepScore,meanRevComScore);
 }
 
+#endif

@@ -8,26 +8,30 @@
 
 #include"geneRegionFile.h"
 #include"geneRegionFile.cpp"
-/*
+
+#include"basicInfo.h"
+#include"basicInfo.cpp"
 #include"bedFile.h"
 #include"bedFile.cpp"
-*/
+#include"faFile.h"
+#include"faFile.cpp"
+#include"backgroundGenerator.h"
+#include"backgroundGenerator.cpp"
 
 
 char agct[300000000];
+char agctForBedFile[300000000];
+std::vector<basicInfo> tmpVec;
 int main(){
 
     /*
-    long long length=loadAgctByChr(24,"GRCh38.d1.vd1.fa",agct);
-    long long num=0;
-    for(long long i=1190436;i<1190500;i++){
-        printf("%c",agct[i]);
-    }
+    backgroundGenerator bg(agct,agctForBedFile);
     */
 
+    /*
     geneRegionFile grf("./geneExons/geneExonCancer.bed",agct);
     grf.solAndPrintRel();
-
+    */
     /*
     bedFile bf("./geneExons/questionCancerGene.bed",agct);
     bf.solAndPrint();

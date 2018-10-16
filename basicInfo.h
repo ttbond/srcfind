@@ -14,6 +14,8 @@ public:
     bool operator <(basicInfo &right);
     bool operator ==(basicInfo &right);
     void printMe(FILE *fp=NULL);
+    void printRange(FILE *fp=NULL);
+    long long getLength();
 
     int chr;
     long long st,ed;

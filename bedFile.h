@@ -12,13 +12,17 @@
 #include"detectRegion.h"
 #include"detectRegion.cpp"
 #include"ttbond_fa.h"
+#include"solRel.h"
+#include"solRel.cpp"
 
 
 class bedFile {
 public:
-    bedFile(char *fileName,char *agct);
-    void solAndPrint();
+    bedFile(char *fileName,char *_agct);
+    bedFile(std::vector<basicInfo> _source,char *_agct);
+    void solAndPrint(char *fileName,char *writeType);
     std::vector<basicInfo> myRegion;
+    std::vector<solRel> myRel;
     char *agct;
 };
 

@@ -4,7 +4,7 @@
 
 #ifndef SRCFIND_TTBOND_FA_H
 #define SRCFIND_TTBOND_FA_H
-#include<stdio.h>
+#include <stdio.h>
 #include "ttbond_math.h"
 //if the chr data is a normal chr return true
 inline bool isRegularChr(char *str){
