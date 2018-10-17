@@ -17,6 +17,8 @@
 #include"faFile.cpp"
 #include"backgroundGenerator.h"
 #include"backgroundGenerator.cpp"
+#include"agctTree.h"
+#include"agctTree.cpp"
 
 
 char agct[300000000];
@@ -28,10 +30,10 @@ int main(){
     backgroundGenerator bg(agct,agctForBedFile);
     */
 
-
+    /*
     geneRegionFile grf("./geneExons/geneExonNoCancer.bed",agct);
     grf.solAndPrintRel();
-
+    */
     /*
     bedFile bf("./geneExons/questionCancerGene.bed",agct);
     bf.solAndPrint();

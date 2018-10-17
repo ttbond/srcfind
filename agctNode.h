@@ -9,6 +9,7 @@
 class agctNode {
 public:
     agctNode();
+    ~agctNode();
     inline agctNode *enterSon(int id);
     agctNode *son[4];
     long long num;
