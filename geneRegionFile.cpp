@@ -27,7 +27,7 @@ geneRegionFile::geneRegionFile(char *file,char *agct) {
 
 void geneRegionFile::solAndPrintRel() {
     std::vector<geneRegion>::iterator it;
-    FILE *fp=fopen("./geneExons/geneExonCancer.gms","w");
+    FILE *fp=fopen("./geneExons/geneExonNoCancer.gms","w");
     for(it=myGeneRegion.begin();it!=myGeneRegion.end();it++){
         (*it).solAndPrintRel(fp);
     }
