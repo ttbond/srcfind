@@ -17,6 +17,8 @@
 #include"ttbond_fa.h"
 #include"basicInfo.h"
 #include"basicInfo.cpp"
+#include"agctTree.h"
+#include"agctTree.cpp"
 
 
 class geneRegion {
@@ -26,6 +28,8 @@ public:
     void addRegion(char *source);
     void addRegion(int _chr,long long _st,long long _ed);
     void solAndPrintRel(FILE *fp);
+    void getSeqSta(agctTree *myT);
+
 
     static int firstGeneRegion,refChr;
     static std::map<int,std::string> id2name;

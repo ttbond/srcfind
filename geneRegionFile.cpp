@@ -11,6 +11,7 @@ geneRegionFile::geneRegionFile(char *file,char *agct) {
     geneRegion init(1);
     std::vector<geneRegion>::iterator it;
     int totalGeneNum=0;
+    myT=NULL;
     while(fgets(cache,1000,fp)!=NULL){
         sscanf(cache,"%s%lld%lld%d",cache2,&tmp,&tmp,&tmpId);
         if(init.allGeneId.find(tmpId)==init.allGeneId.end()){
@@ -27,9 +28,26 @@ geneRegionFile::geneRegionFile(char *file,char *agct) {
 
 void geneRegionFile::solAndPrintRel() {
     std::vector<geneRegion>::iterator it;
-    FILE *fp=fopen("./geneExons/geneExonNoCancer.gms","w");
+    FILE *fp=fopen("./geneExons/geneExonCancer.gms","w");
     for(it=myGeneRegion.begin();it!=myGeneRegion.end();it++){
         (*it).solAndPrintRel(fp);
     }
     fclose(fp);
+}
+
+void geneRegionFile::getSeqSta() {
+    std::vector<geneRegion>::iterator it;
+    FILE *fp=fopen("./geneExons/geneExonCancer.sta","w");
+    myT=new agctTree();
+    for(it=myGeneRegion.begin();it!=myGeneRegion.end();it++){
+        (*it).getSeqSta(myT);
+    }
+    myT->printMostSeq(50,7,fp);
+    fprintf(fp,"\n");
+    fclose(fp);
+}
+geneRegionFile::~geneRegionFile() {
+    if(myT!=NULL){
+        myT->~agctTree();
+    }
 }

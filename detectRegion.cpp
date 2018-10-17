@@ -346,7 +346,7 @@ double  *detectRegion::getMirrorRepeatScore(FILE *fp){
         mirRepDfs(firstBasePos[i],indEndOfFirstBasePos[i],getInitMisSt(i,firstBasePos,cacheForDfs),getInitMisEd(i,firstBasePos,cacheForDfs),firstBasePos2[i],indEndOfFirstBasePos2[i],getInitMisSt(i,firstBasePos2,cacheForDfs2),getInitMisEd(i,firstBasePos2,cacheForDfs2),1);
     }
     statisticScore(mirrorRepScore,sumMirRepScore);
-    printScore(mirrorRepScore,mirrorRepScore+length,fp);
+    //printScore(mirrorRepScore,mirrorRepScore+length,fp);
     //release(directRepScore);
 }
 

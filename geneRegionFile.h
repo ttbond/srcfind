@@ -8,14 +8,19 @@
 #include<map>
 #include"geneRegion.h"
 #include"geneRegion.cpp"
+#include"agctTree.h"
+#include"agctTree.cpp"
 
 
 class geneRegionFile {
 public:
     geneRegionFile(char *file,char *agct);
     void solAndPrintRel();
+    void getSeqSta();
+    ~geneRegionFile();
     std::vector<geneRegion> myGeneRegion;
     std::map<int,int> id2ind;
+    agctTree *myT;
 };
 
 

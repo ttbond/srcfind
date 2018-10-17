@@ -6,15 +6,22 @@
 #include "agctTree.h"
 agctTree::agctTree(){
     root=new agctNode();
-    maxLevel=20;
+    maxLevel=100;
+    charCache=NULL;
 }
-void agctTree::release(agctNode *tar){
+void agctTree::release(agctNode *tar,int level){
     for(int i=0;i<4;i++){
         if(tar->son[i]!=NULL){
-            release(tar->son[i]);
+            release(tar->son[i],level+1);
         }
     }
     delete tar;
+}
+void agctTree::release(char *&tmp){
+    if(tmp!=NULL){
+        delete[] tmp;
+    }
+    tmp=NULL;
 }
 inline int agctTree::nu2int(char *from){
     switch(*from){
@@ -34,13 +41,28 @@ inline int agctTree::nu2int(char *from){
             return -1;
     }
 }
-void agctTree::addSeq(agctNode &nowNode,char *from,int len,int level){
+inline char agctTree::int2nu(int from){
+    switch(from){
+        case 0:
+            return 'A';
+        case 1:
+            return 'G';
+        case 2:
+            return 'C';
+        case 3:
+            return 'T';
+        default:
+            printf("Wrong parameter in agctTree::int2nu value:%d\n",from);
+            exit(-1);
+    }
+}
+void agctTree::addSeq(agctNode *nowNode,char *from,int len,int level){
     if(level<maxLevel&&len>0){
-        agctNode *nextNode=nowNode.enterSon(nu2int(from));
-        addSeq(*nextNode,from+1,len-1,level+1);
+        agctNode *nextNode=nowNode->enterSon(nu2int(from));
+        addSeq(nextNode,from+1,len-1,level+1);
     }
     else{
-        nowNode.num++;
+        nowNode->num++;
     }
 }
 void agctTree::getTotalNum(std::vector<int> &rel,agctNode *nowNode,int level){
@@ -53,8 +75,7 @@ void agctTree::getTotalNum(std::vector<int> &rel,agctNode *nowNode,int level){
         }
     }
 }
-void agctTree::printMostSeq(int rank,int _leastLen,char *fileName){
-    FILE *fp=fopen(fileName,"w");
+void agctTree::printMostSeq(int rank,int _leastLen,FILE *fp){
     leastLen=_leastLen;
     std::vector<int> nums;
     getTotalNum(nums,root,0);
@@ -63,9 +84,36 @@ void agctTree::printMostSeq(int rank,int _leastLen,char *fileName){
     for(it=nums.begin();it!=nums.end();it++){
         fprintf(fp,"%d\t",(*it));
     }
-    fclose(fp);
+    minSelectFre=-nums[rank-1];
+    release(charCache);
+    charCache=new char[maxLevel+10];
+    minSelectLen=leastLen;
+    fprintf(fp,"\n%d\t%d\t\n",minSelectFre,minSelectLen);
+    fpCache=fp;
+    selectByFre(root,0);
+}
+void agctTree::selectByFre(agctNode *nowNode,int level){
+    for(int i=0;i<4;i++){
+        if(nowNode->son[i]!=NULL){
+            charCache[level]=int2nu(i);
+            selectByFre(nowNode->son[i],level+1);
+        }
+    }
+    if(nowNode->num>=minSelectFre&&level>=minSelectLen){
+        charCache[level]='\0';
+        fprintf(fpCache,"%s\n",charCache);
+    }
+}
+void agctTree::addSeq(int *lenSt,int lenEd,char *seq){
+    for(int i=0;i<lenEd;i++){
+        if(lenSt[i]<=5){
+            continue;
+        }
+        addSeq(root,seq+i,lenSt[i],0);
+    }
 }
 agctTree::~agctTree() {
-    release(root);
+    release(root,0);
 }
+
 #endif

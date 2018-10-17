@@ -22,11 +22,4 @@ inline agctNode *agctNode::enterSon(int id){
     return son[id];
 }
 
-agctNode::~agctNode(){
-    for(int i=0;i<4;i++){
-        if(son[i]!=NULL){
-            delete son[i];
-        }
-    }
-}
 #endif

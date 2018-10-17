@@ -30,10 +30,10 @@ int main(){
     backgroundGenerator bg(agct,agctForBedFile);
     */
 
-    /*
-    geneRegionFile grf("./geneExons/geneExonNoCancer.bed",agct);
-    grf.solAndPrintRel();
-    */
+
+    geneRegionFile grf("./geneExons/geneExonCancer.bed",agct);
+    grf.getSeqSta();
+
     /*
     bedFile bf("./geneExons/questionCancerGene.bed",agct);
     bf.solAndPrint();

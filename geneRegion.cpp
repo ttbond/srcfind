@@ -78,3 +78,26 @@ void geneRegion::solAndPrintRel(FILE *fp){
         fprintf(fp,"\n");
     }
 }
+
+void geneRegion::getSeqSta(agctTree *sta) {
+    sort(myInfo.begin(),myInfo.end());
+    std::vector<basicInfo>::iterator newEnd;
+    newEnd=unique(myInfo.begin(),myInfo.end());
+    myInfo.erase(newEnd,myInfo.end());
+    int exonNum=myInfo.size();
+    for(int i=0;i<exonNum;i++){
+        if(myInfo[i].chr==24){
+            continue;
+        }
+        if(myInfo[i].chr!=refChr){
+            refChr=myInfo[i].chr;
+            loadAgctByChr(refChr,"GRCh38.d1.vd1.fa",agct);
+        }
+        printf("gene:%d\texonNum:%d\t",id,i);
+        printf("%lld %lld\n",myInfo[i].st,myInfo[i].ed);
+        detectRegion region(agct,myInfo[i].chr,myInfo[i].st,myInfo[i].ed,myInfo[i].sv);
+        region.getMirrorRepeatScore();
+        sta->addSeq(region.detectRel,region.length,region.agct);
+    }
+
+}
